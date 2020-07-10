@@ -23,11 +23,19 @@ def main():
         if not ip_addr:
             print("Waiting for wlan0 to get ip")
             time.sleep(1)
+    while True:
+        try:
+            run("ip addr show usb0")
+        except subprocess.CalledProcessError:
+            print("Waiting for usb0")
+            time.sleep(1)
+            continue
+        break
     run("ip addr flush usb0")
     run(f"ip addr add {ip_addr}/{prefixlen} dev usb0")
-    run("pkill -9 parprouted")
+    run("pkill -9 parprouted || true")
     run("ip link set wlan0 promisc on")
     run("parprouted usb0 wlan0")
-    run("pkill dhcp-helper")
+    run("pkill dhcp-helper || true")
     run("dhcp-helper -i usb0 -b wlan0")
 main()
