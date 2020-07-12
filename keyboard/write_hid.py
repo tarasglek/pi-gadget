@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-
-import click
+import sys
 
 NULL_CHAR = chr(0)
 # https://randomnerdtutorials.com/raspberry-pi-zero-usb-keyboard-hid/
@@ -56,29 +55,5 @@ def typeit(str):
     # write_report(NULL_CHAR*8)
         # type_key(None, fd)
 
-def click2code(c):
-    table = {
-        '\x1b[A': "UP",
-        '\x1b[B': "DOWN",
-        '\x1b[C': "RIGHT",
-        '\x1b[D': "LEFT",
-        '\x7f': "BACKSPACE",
-        '\x1bOP': 'F1',
-        '\x1bOQ': 'F2',
-        '\x1b[24~': 'F12',
-    }
-    if c in table:
-        return table[c]
-    elif len(c) == 1:
-        return c
-    return repr(c)
-
-while True:
-    c = click.getchar()
-    code = click2code(c)
-    print("Pressed (%s, %s)" % (code, repr(c)))
-    try:
-        with open('/dev/hidg0', 'rb+') as fd:
-            type_key(code, fd)
-    except FileNotFoundError:
-        pass
+for line in sys.stdin:
+    print("foo:" + line.rstrip())
