@@ -14,16 +14,20 @@ https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf
 def type_key(key, fd):
     letter = lambda c: chr(ord(c) - ord('a') + 4) + NULL_CHAR * 5
     table = {
+        '0': 39,
         ' ': 44,
-        'ENTER': 40,
+        '\r': 40,
         'ESC': 41,
         'BACKSPACE': 42,
-        'TAB': 43,
+        '\t': 43,
+        '-':45,
+        'F1': 58,
+        'F2': 59,
         'F12': 69,
         'RIGHT': 79,
         'LEFT': 80,
         'DOWN': 81,
-        'UP': 82
+        'UP': 82,
     }
     if key in table:
         out = NULL_CHAR*2+chr(table[key])+NULL_CHAR*5
@@ -33,33 +37,48 @@ def type_key(key, fd):
     elif key >= 'A' and key <= 'Z':
         # 4 == 'a' in usb hid table
         out = chr(32)+NULL_CHAR + letter(key.lower())
+    elif key >= '1' and key <= '9':
+        # 4 == 'a' in usb hid table
+        out = NULL_CHAR*2 +chr(ord(c) - ord('1') + 30) + NULL_CHAR * 5
     else:
-        raise Exception("Unhandled key:" + key)
+        print("Unhandled key:" + repr(key))
+        return
     # Release all keys
+    print(len(out))
     out+=(NULL_CHAR*8)
     fd.write(out.encode())
 
 def typeit(str):
     with open('/dev/hidg0', 'rb+') as fd:
         [type_key(c, fd) for c in str]
-        for word in ["ENTER", "BACKSPACE","ESC",  "F12", "TAB", "UP", "DOWN", "LEFT", "RIGHT"]:
+        for word in ["\r", "BACKSPACE","ESC",  "F12", "\t", "UP", "DOWN", "LEFT", "RIGHT"]:
             type_key(word, fd)
     # write_report(NULL_CHAR*8)
         # type_key(None, fd)
-printable = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
+
+def click2code(c):
+    table = {
+        '\x1b[A': "UP",
+        '\x1b[B': "DOWN",
+        '\x1b[C': "RIGHT",
+        '\x1b[D': "LEFT",
+        '\x7f': "BACKSPACE",
+        '\x1bOP': 'F1',
+        '\x1bOQ': 'F2',
+        '\x1b[24~': 'F12',
+    }
+    if c in table:
+        return table[c]
+    elif len(c) == 1:
+        return c
+    return repr(c)
 
 while True:
     c = click.getchar()
-    click.echo()
-    if c == 'y':
-        click.echo('We will go on')
-    elif c == 'n':
-        click.echo('Abort!')
-        break
-    elif c == '\x1b[D':
-        click.echo('Left arrow <-')
-    elif c == '\x1b[C':
-        click.echo('Right arrow ->')
-    else:
-        click.echo(repr([c, ord(c)]))
-        click.echo('You pressed: "' + ''.join([ '\\'+hex(ord(i))[1:] if i not in printable else i for i in c ]) +'"' )
+    code = click2code(c)
+    print("Pressed (%s, %s)" % (code, repr(c)))
+    try:
+        with open('/dev/hidg0', 'rb+') as fd:
+            type_key(code, fd)
+    except FileNotFoundError:
+        pass
