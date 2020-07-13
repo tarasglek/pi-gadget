@@ -41,6 +41,12 @@ def parse_event(e):
                 modifiers.append("CTRL")
             if modifier_mask & ALT:
                 modifiers.append("ALT")
+    table = {
+        "Return": "ENTER",
+    }
+    if len(key) > 1:
+        key = key.upper()
+    key = table.get(key, key)
     ret = '+'.join(modifiers + [key])
     print(ret)
 
