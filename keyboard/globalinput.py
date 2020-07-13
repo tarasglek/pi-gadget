@@ -25,14 +25,16 @@ def parse_event(e):
         return
     key = None
     modifiers = []
+    detail = 0
     for line in lines:
         stuff = line.strip().split(': ', 1)
         # print(stuff)
         if stuff[0] == 'detail':
-            key = keymap[stuff[1]]
-            print(key)
+            detail = stuff[1]
+            key = keymap[detail]
         elif stuff[0] == 'modifiers':
             modifier_mask = int(stuff[1].split().pop(), 16)
+            print(modifier_mask, key, detail, file=sys.stderr)
             if modifier_mask & SHIFT:
                 modifiers.append("SHIFT")
             if modifier_mask & CTRL:
@@ -41,7 +43,6 @@ def parse_event(e):
                 modifiers.append("ALT")
     ret = '+'.join(modifiers + [key])
     print(ret)
-        # print(stuff)
 
 def parse_input():
     payload = ''

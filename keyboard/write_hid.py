@@ -56,4 +56,5 @@ def typeit(str):
         # type_key(None, fd)
 
 for line in sys.stdin:
-    print("foo:" + line.rstrip())
+    with open('/dev/hidg0', 'rb+') as fd:
+        type_key(line.rstrip(), fd)
