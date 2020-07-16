@@ -33,7 +33,8 @@ def type_key(expression, fd):
     table = {
         '0': 39,
         ' ': 44,
-        'ENTER': 40,
+        'SPACE': 44,
+        'RETURN': 40,
         'ESC': 41,
         'BACKSPACE': 42,
         'TAB': 43,
