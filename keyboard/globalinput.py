@@ -34,7 +34,6 @@ def parse_event(e):
             key = keymap[detail]
         elif stuff[0] == 'modifiers':
             modifier_mask = int(stuff[1].split().pop(), 16)
-            print(modifier_mask, key, detail, file=sys.stderr)
             if modifier_mask & SHIFT:
                 modifiers.append("SHIFT")
             if modifier_mask & CTRL:
@@ -48,7 +47,10 @@ def parse_event(e):
         key = key.upper()
     key = table.get(key, key)
     ret = '+'.join(modifiers + [key])
-    print(ret)
+    ret = ret.replace("_L", "").replace("_R", "").replace("CONTROL", "CTRL")
+
+    print(ret,flush=True)
+    print(ret,file=sys.stderr, flush=True)
 
 def parse_input():
     payload = ''
