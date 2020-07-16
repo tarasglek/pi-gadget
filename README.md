@@ -1,2 +1,1 @@
-cvlc v4l2:///dev/video1:chroma=mjpg   --sout '#standard{access=http,mux=ts,mime=video/ts,dst=:5901}'
-vlc http://localhost:5901
+https://gist.github.com/zhuker/8d5c8febf85d41e248687ed732e92ddb
