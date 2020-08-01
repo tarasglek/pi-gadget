@@ -47,7 +47,7 @@ def parse_event(e):
         key = key.upper()
     key = table.get(key, key)
     ret = '+'.join(modifiers + [key])
-    ret = ret.replace("_L", "").replace("_R", "").replace("CONTROL", "CTRL")
+    ret = ret.replace("_L", "").replace("_R", "").replace("CONTROL", "CTRL").replace("ESCAPE", "ESC")
 
     print(ret,flush=True)
     print(ret,file=sys.stderr, flush=True)
