@@ -63,7 +63,7 @@ cd functions/mass_storage.usb0
 echo 0 > stall
 echo 1 > lun.0/removable
 echo 0 > lun.0/ro
-echo /home/pi/proxmox-ve_6.2-1.iso > lun.0/file
+echo /home/pi/disk-image > lun.0/file
 cd ../../
 
 #OS Descriptor fuer Windoof setzen
